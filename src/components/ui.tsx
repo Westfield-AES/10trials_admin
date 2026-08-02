@@ -49,13 +49,13 @@ export function PageHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
-      <div>
+    <div className="flex min-w-0 flex-col justify-between gap-4 lg:flex-row lg:items-end">
+      <div className="page-header-copy">
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="mt-1 text-3xl font-black tracking-[-0.04em] text-[#032e4d]">{title}</h1>
+        <h1 className="mt-1 break-words text-3xl font-black tracking-[-0.04em] text-[#032e4d]">{title}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[#607282]">{description}</p>
       </div>
-      {action}
+      {action && <div className="page-header-action">{action}</div>}
     </div>
   );
 }
@@ -81,11 +81,11 @@ export function MetricCard({
     red: "bg-red-50 text-red-700",
   };
   return (
-    <article className="panel p-5">
+    <article className="panel p-4 sm:p-5">
       <div className={cn("grid size-9 place-items-center rounded-lg", tones[tone])}>
         <Icon size={18} />
       </div>
-      <p className="mt-4 text-2xl font-black tracking-[-0.03em] text-[#032e4d]">
+      <p className="mt-4 break-words text-2xl font-black tracking-[-0.03em] text-[#032e4d]">
         {typeof value === "number" ? formatNumber(value) : value}
       </p>
       <p className="mt-1 text-sm font-bold text-[#526877]">{label}</p>
@@ -227,7 +227,7 @@ export function PaginationControls({
   const start = total ? offset + 1 : 0;
   const end = Math.min(total, offset + limit);
   return (
-    <div className="flex items-center justify-between border-t border-[#e2e9ed] px-5 py-4 text-sm">
+    <div className="pagination-controls flex items-center justify-between border-t border-[#e2e9ed] px-4 py-4 text-sm sm:px-5">
       <p className="text-[#607282]">{start}–{end} of {formatNumber(total)}</p>
       <div className="flex gap-2">
         <button className="button-secondary" disabled={offset === 0} onClick={() => onChange(Math.max(0, offset - limit))}>
@@ -256,7 +256,7 @@ export function Modal({
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section
-        className="panel w-full max-w-lg p-6"
+        className="panel w-full max-w-lg p-5 sm:p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -293,7 +293,7 @@ export function TrendChart({
       .join(" ");
   return (
     <div>
-      <svg viewBox="0 0 100 100" className="h-56 w-full" preserveAspectRatio="none" role="img" aria-label="Activity trend">
+      <svg viewBox="0 0 100 100" className="h-44 w-full sm:h-56" preserveAspectRatio="none" role="img" aria-label="Activity trend">
         {[10, 31, 52, 73, 94].map((y) => (
           <line key={y} x1="0" y1={y} x2="100" y2={y} stroke="#e7edf0" strokeWidth="0.5" />
         ))}
