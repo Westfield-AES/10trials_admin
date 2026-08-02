@@ -88,9 +88,9 @@ export default function LearningPage() {
       <section className="panel mt-6 overflow-hidden">
         <div className="flex flex-col justify-between gap-3 border-b border-[#dce5eb] p-5 md:flex-row md:items-end">
           <SectionTitle title="Session records" note="Metadata and result summaries only" />
-          <div className="flex gap-2">
-            <select className="field w-40" value={status} onChange={(event) => { setStatus(event.target.value); setOffset(0); }}><option value="">All statuses</option>{["ready", "active", "completed", "abandoned", "failed"].map((item) => <option key={item} value={item}>{titleCase(item)}</option>)}</select>
-            <select className="field w-36" value={mode} onChange={(event) => { setMode(event.target.value); setOffset(0); }}><option value="">All modes</option><option value="learn">Learn</option><option value="simulate">Simulate</option></select>
+          <div className="filter-row md:w-auto">
+            <select className="field md:w-40" value={status} onChange={(event) => { setStatus(event.target.value); setOffset(0); }}><option value="">All statuses</option>{["ready", "active", "completed", "abandoned", "failed"].map((item) => <option key={item} value={item}>{titleCase(item)}</option>)}</select>
+            <select className="field md:w-36" value={mode} onChange={(event) => { setMode(event.target.value); setOffset(0); }}><option value="">All modes</option><option value="learn">Learn</option><option value="simulate">Simulate</option></select>
           </div>
         </div>
         {sessions.isLoading ? <div className="grid min-h-64 place-items-center"><Spinner /></div> : sessions.isError ? <div className="p-5"><ErrorPanel error={sessions.error} onRetry={() => sessions.refetch()} /></div> : (

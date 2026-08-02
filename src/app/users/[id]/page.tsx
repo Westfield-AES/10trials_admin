@@ -104,7 +104,7 @@ export default function UserDetailPage() {
           <div className="mt-6 grid gap-6 xl:grid-cols-2">
             <section className="panel p-6">
               <h2 className="text-lg font-black text-[#032e4d]">Account</h2>
-              <dl className="mt-5 grid grid-cols-[150px_1fr] gap-x-5 gap-y-4 text-sm">
+              <dl className="detail-list mt-5 grid gap-y-4 text-sm">
                 <dt className="font-bold text-[#607282]">Status</dt><dd><StatusBadge value={data.user.status} /></dd>
                 <dt className="font-bold text-[#607282]">Plan</dt><dd><StatusBadge value={data.user.plan} /></dd>
                 <dt className="font-bold text-[#607282]">Language</dt><dd>{data.user.preferred_language.toUpperCase()}</dd>
@@ -117,7 +117,7 @@ export default function UserDetailPage() {
             <section className="panel p-6">
               <h2 className="text-lg font-black text-[#032e4d]">Subscription</h2>
               {data.subscription ? (
-                <dl className="mt-5 grid grid-cols-[150px_1fr] gap-x-5 gap-y-4 text-sm">
+                <dl className="detail-list mt-5 grid gap-y-4 text-sm">
                   <dt className="font-bold text-[#607282]">Status</dt><dd><StatusBadge value={data.subscription.status} /></dd>
                   <dt className="font-bold text-[#607282]">Period</dt><dd>{titleCase(data.subscription.billing_period)}</dd>
                   <dt className="font-bold text-[#607282]">Amount</dt><dd>{formatMinorAmount(data.subscription.amount, data.subscription.currency || "NGN")}</dd>
