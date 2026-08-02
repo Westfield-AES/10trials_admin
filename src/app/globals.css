@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #032e4d;
+  --orange: #ff6b00;
+  --ink: #102231;
+  --muted: #607282;
+  --line: #dce5eb;
+  --canvas: #f5f8fa;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--canvas); }
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.5; }
+:focus-visible { outline: 3px solid #ff9b52; outline-offset: 2px; }
+::selection { background: #07436c; color: white; }
+
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 10px 30px rgba(3, 46, 77, 0.055);
+}
+.eyebrow {
+  color: #c94d00;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.field {
+  min-height: 2.65rem;
+  width: 100%;
+  border: 1px solid #cbd7de;
+  border-radius: 0.7rem;
+  background: white;
+  padding: 0.65rem 0.8rem;
+  color: var(--ink);
+  font-size: 0.875rem;
+}
+.field:focus { border-color: #07436c; box-shadow: 0 0 0 3px rgba(7, 67, 108, 0.1); outline: none; }
+.field-label { display: block; margin-bottom: 0.4rem; color: #334b5c; font-size: 0.78rem; font-weight: 800; }
+.button-primary, .button-secondary, .button-danger {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+.button-primary { border: 1px solid #e85b00; background: #ff6b00; color: white; }
+.button-primary:hover { background: #e85b00; }
+.button-secondary { border: 1px solid #cfdbe2; background: white; color: #334b5c; }
+.button-secondary:hover { background: #f5f8fa; }
+.button-danger { border: 1px solid #dc2626; background: #dc2626; color: white; }
+.table-shell { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.data-table th {
+  border-bottom: 1px solid var(--line);
+  background: #f8fafb;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  color: #607282;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.data-table td { border-bottom: 1px solid #e8eef1; padding: 0.85rem 1rem; vertical-align: middle; }
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table tbody tr:hover { background: #fbfdfd; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: rgba(1, 28, 48, 0.62); padding: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
