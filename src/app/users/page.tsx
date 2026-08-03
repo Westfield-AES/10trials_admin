@@ -41,7 +41,7 @@ export default function UsersPage() {
       <PageHeader
         eyebrow="Account operations"
         title="Users"
-        description="Find learner accounts, inspect usage and subscription state, and handle approved support actions."
+        description="Find user accounts, inspect usage and subscription state, and handle approved support actions."
       />
       <form
         className="panel mt-7 grid gap-3 p-4 md:grid-cols-[1fr_180px_160px_auto]"
@@ -82,7 +82,7 @@ export default function UsersPage() {
                   {users.data.users.map((user) => (
                     <tr key={user.id}>
                       <td>
-                        <p className="font-black text-[#032e4d]">{user.display_name || "Unnamed learner"}</p>
+                        <p className="font-black text-[#032e4d]">{user.display_name || "Unnamed user"}</p>
                         <p className="mt-0.5 text-xs text-[#607282]">{user.email || "No email"}</p>
                       </td>
                       <td><StatusBadge value={user.status} /></td>

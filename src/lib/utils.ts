@@ -6,9 +6,9 @@ export function cn(...values: ClassValue[]) {
 }
 
 export function formatDate(value?: string | null, includeTime = false) {
-  if (!value) return "—";
+  if (!value) return "N/A";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "N/A";
   return new Intl.DateTimeFormat("en", {
     dateStyle: "medium",
     ...(includeTime ? { timeStyle: "short" as const } : {}),
@@ -35,7 +35,7 @@ export function formatUsd(value?: number | null) {
 }
 
 export function formatMinorAmount(value?: number | null, currency = "NGN") {
-  if (value == null) return "—";
+  if (value == null) return "N/A";
   return new Intl.NumberFormat("en", {
     style: "currency",
     currency,

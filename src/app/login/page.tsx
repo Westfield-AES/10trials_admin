@@ -163,10 +163,10 @@ function LoginForm() {
             Internal operations
           </p>
           <h1 className="mt-5 text-5xl font-black leading-[1.05] tracking-[-0.055em]">
-            A clear view of every moving part.
+            Operate 10Trials with complete visibility.
           </h1>
           <p className="mt-5 max-w-lg text-lg leading-8 text-[#c7d8e4]">
-            Monitor learners, session quality, billing, AI spend, and platform reliability from one focused workspace.
+            Monitor user accounts, exam sessions, billing, AI spend, and platform reliability from one secure workspace.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs font-bold text-[#9fb8c9]">
@@ -178,7 +178,7 @@ function LoginForm() {
           <div className="lg:hidden"><Logo href="/login" /></div>
           {challenge ? (
             <>
-              <div className="mt-10 grid size-11 place-items-center rounded-xl bg-[#fff0e5] text-[#c94d00] lg:mt-0">
+              <div className="mt-10 grid size-10 place-items-center rounded-md border border-[#cbd7de] text-[#07436c] lg:mt-0">
                 <MailCheck size={22} />
               </div>
               <p className="eyebrow mt-6">Two-step verification</p>
