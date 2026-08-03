@@ -56,7 +56,7 @@ export default function UserDetailPage() {
           body: JSON.stringify({ reason }),
         });
         setFeedback({
-          message: action === "delete" ? "Learner access removed. The account can still be restored." : "Learner access restored.",
+          message: action === "delete" ? "User access removed. The account can still be restored." : "User access restored.",
           tone: "success",
         });
       }
@@ -83,7 +83,7 @@ export default function UserDetailPage() {
           <div className="mt-5">
             <PageHeader
               eyebrow="User record"
-              title={data.user.display_name || "Unnamed learner"}
+              title={data.user.display_name || "Unnamed user"}
               description={data.user.email || "No email address recorded"}
               action={
                 <div className="flex flex-wrap gap-2">
@@ -130,12 +130,12 @@ export default function UserDetailPage() {
           <section className="panel mt-6 overflow-hidden">
             <div className="border-b border-[#dce5eb] p-5"><h2 className="text-lg font-black text-[#032e4d]">Recent sessions</h2><p className="mt-1 text-sm text-[#607282]">Metadata and outcomes only. Questions and answers are not exposed.</p></div>
             <div className="table-shell"><table className="data-table"><thead><tr><th>Exam</th><th>Status</th><th>Mode</th><th>Questions</th><th>Score</th><th>Created</th></tr></thead><tbody>
-              {data.recent_sessions.map((session) => <tr key={session.id}><td className="font-black text-[#032e4d]">{session.exam_name}</td><td><StatusBadge value={session.status} /></td><td>{titleCase(session.mode)}</td><td>{session.num_questions ?? "—"}</td><td>{session.status === "completed" ? formatPercent(session.percentage) : "—"}</td><td>{formatDate(session.created_at)}</td></tr>)}
+              {data.recent_sessions.map((session) => <tr key={session.id}><td className="font-black text-[#032e4d]">{session.exam_name}</td><td><StatusBadge value={session.status} /></td><td>{titleCase(session.mode)}</td><td>{session.num_questions ?? "N/A"}</td><td>{session.status === "completed" ? formatPercent(session.percentage) : "N/A"}</td><td>{formatDate(session.created_at)}</td></tr>)}
             </tbody></table></div>
           </section>
-          <Modal open={Boolean(action)} title={action === "usage" ? "Adjust monthly usage" : action === "delete" ? "Remove learner access" : "Restore account"} onClose={() => setAction(null)}>
+          <Modal open={Boolean(action)} title={action === "usage" ? "Adjust monthly usage" : action === "delete" ? "Remove user access" : "Restore account"} onClose={() => setAction(null)}>
             {action === "usage" && <div className="grid gap-4 sm:grid-cols-2"><label><span className="field-label">Session change</span><input className="field" type="number" min={-100} max={100} value={sessionDelta} onChange={(event) => setSessionDelta(Number(event.target.value))} /></label><label><span className="field-label">Question change</span><input className="field" type="number" min={-10000} max={10000} value={questionDelta} onChange={(event) => setQuestionDelta(Number(event.target.value))} /></label></div>}
-            {action === "delete" && <p className="rounded-xl bg-red-50 p-4 text-sm leading-6 text-red-800">This removes learner access but remains recoverable. No permanent deletion is performed.</p>}
+            {action === "delete" && <p className="rounded-xl bg-red-50 p-4 text-sm leading-6 text-red-800">This removes user access but remains recoverable. No permanent deletion is performed.</p>}
             <label className="mt-4 block"><span className="field-label">Reason</span><textarea className="field min-h-24" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Required for the audit log" /></label>
             <div className="mt-5 flex justify-end gap-2"><button className="button-secondary" onClick={() => setAction(null)}>Cancel</button><button className={action === "delete" ? "button-danger" : "button-primary"} disabled={busy || reason.trim().length < 3 || (action === "usage" && !sessionDelta && !questionDelta)} onClick={submitAction}>{busy ? "Saving…" : "Confirm"}</button></div>
           </Modal>

@@ -90,12 +90,12 @@ export default function AdminsPage() {
     </section>
     <section className="panel mt-6 p-6"><h2 className="text-lg font-black text-[#032e4d]">Role summary</h2><div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{[
       ["Owner", "All read access, approved mutations, and administrator management."],
-      ["Operations", "Platform, job, AI, billing, learning, audit, and safe job retry access."],
-      ["Support", "User, learning, billing, and audited quota adjustment access."],
-      ["Viewer", "Read-only overview, learning, billing, and AI analytics."],
+      ["Operations", "Platform, job, AI, billing, exam analytics, audit, and safe job retry access."],
+      ["Support", "User, exam analytics, billing, and audited quota adjustment access."],
+      ["Viewer", "Read-only overview, exam analytics, billing, and AI analytics."],
     ].map(([name, copy]) => <article key={name} className="rounded-xl border border-[#e2e9ed] p-4"><p className="font-black text-[#032e4d]">{name}</p><p className="mt-2 text-xs leading-5 text-[#607282]">{copy}</p></article>)}</div></section>
     <Modal open={createOpen} title="Create administrator" onClose={closeCreate}>
-      <p className="text-sm leading-6 text-[#607282]">This creates an independent administrator account. The same email may also belong to a learner; their passwords, sessions, and permissions remain separate.</p>
+      <p className="text-sm leading-6 text-[#607282]">This creates an independent administrator account. The same email may also belong to a 10Trials user; passwords, sessions, and permissions remain separate.</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label><span className="field-label">Full name</span><input className="field" autoComplete="name" value={displayName} onChange={(event) => setDisplayName(event.target.value)} /></label>
         <label><span className="field-label">Role</span><select className="field" value={role} onChange={(event) => setRole(event.target.value as AdminRole)}>{roles.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}</select></label>

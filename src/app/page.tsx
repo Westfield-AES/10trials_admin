@@ -49,9 +49,9 @@ export default function OverviewPage() {
   return (
     <AdminShell>
       <PageHeader
-        eyebrow="Command centre"
+        eyebrow="Platform overview"
         title="Overview"
-        description="The core signals for learner activity, learning throughput, revenue, cost, and reliability."
+        description="Core signals for user activity, assessment throughput, revenue, cost, and platform reliability."
         action={
           <select className="field w-40" value={days} onChange={(event) => setDays(Number(event.target.value))}>
             <option value={7}>Last 7 days</option>
@@ -69,15 +69,15 @@ export default function OverviewPage() {
           <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard icon={UsersRound} label="Active users" value={summary.active_users} note={`${summary.new_users} new in this period`} />
             <MetricCard icon={Activity} label="Completed sessions" value={summary.completed_sessions} note={`${formatPercent(summary.completion_rate)} generated-to-completed`} tone="green" />
-            <MetricCard icon={CircleUserRound} label="Pro learners" value={summary.pro_users} note={`${summary.total_users} registered accounts`} tone="violet" />
+            <MetricCard icon={CircleUserRound} label="Pro accounts" value={summary.pro_users} note={`${summary.total_users} registered accounts`} tone="violet" />
             <MetricCard icon={BrainCircuit} label="AI spend" value={formatUsd(summary.ai_cost_usd)} note={`Across ${days} days`} tone="orange" />
           </div>
           <div className="mt-6 grid gap-6 xl:grid-cols-[1.65fr_0.85fr]">
             <section className="panel p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
-                <SectionTitle title="Learning activity" note="Generated sessions and completed reports" />
+                <SectionTitle title="Session activity" note="Generated sessions and completed reports" />
                 <div className="flex gap-4 text-xs font-bold text-[#607282]">
-                  <span className="flex items-center gap-2"><i className="size-2 rounded-full bg-[#ff6b00]" /> Generated</span>
+                  <span className="flex items-center gap-2"><i className="size-2 rounded-full bg-[#d45a18]" /> Generated</span>
                   <span className="flex items-center gap-2"><i className="size-2 rounded-full bg-[#9eb3c0]" /> Completed</span>
                 </div>
               </div>
@@ -93,7 +93,7 @@ export default function OverviewPage() {
               <SectionTitle title="Revenue received" note="Successful Paystack charges by currency" />
               <div className="mt-6 space-y-4">
                 {data.revenue.length ? data.revenue.map((item) => (
-                  <div key={item.currency} className="rounded-xl bg-[#f5f8fa] p-4">
+                  <div key={item.currency} className="rounded-xl bg-[#f3f6f8] p-4">
                     <p className="text-xs font-black uppercase tracking-wider text-[#607282]">{item.currency}</p>
                     <p className="mt-1 text-2xl font-black text-[#032e4d]">{formatMinorAmount(item.amount, item.currency)}</p>
                   </div>

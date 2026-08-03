@@ -34,7 +34,7 @@ interface NavigationItem {
 const navigation: NavigationItem[] = [
   { href: "/", label: "Overview", icon: LayoutDashboard, permission: "dashboard.read" },
   { href: "/users", label: "Users", icon: Users, permission: "users.read" },
-  { href: "/learning", label: "Learning", icon: BarChart3, permission: "learning.read" },
+  { href: "/learning", label: "Exam analytics", icon: BarChart3, permission: "learning.read" },
   { href: "/billing", label: "Billing", icon: CircleDollarSign, permission: "billing.read" },
   { href: "/ai-costs", label: "AI & costs", icon: BrainCircuit, permission: "ai.read" },
   { href: "/operations", label: "Operations", icon: BriefcaseBusiness, permission: "jobs.read" },
@@ -88,7 +88,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   if (user && (error || !admin)) {
     const message = accessErrorMessage(error);
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f5f8fa] p-6">
+      <main className="grid min-h-screen place-items-center bg-[#f3f6f8] p-6">
         <section className="panel max-w-lg p-8 text-center">
           <div className="mx-auto grid size-12 place-items-center rounded-xl bg-red-50 text-red-700">
             <ShieldCheck />
@@ -130,10 +130,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               href={href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-extrabold",
+                "flex items-center gap-3 border-l-2 px-3 py-2.5 text-sm font-bold",
                 active
-                  ? "bg-[#fff0e5] text-[#b94700]"
-                  : "text-[#526877] hover:bg-[#f4f8fa] hover:text-[#032e4d]",
+                  ? "border-[#e85b00] bg-[#f3f6f8] text-[#032e4d]"
+                  : "border-transparent text-[#526877] hover:bg-[#f4f8fa] hover:text-[#032e4d]",
               )}
             >
               <Icon size={18} />

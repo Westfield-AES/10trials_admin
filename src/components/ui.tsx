@@ -6,22 +6,20 @@ import { requestErrorMessage } from "@/lib/user-errors";
 
 export function Logo({ href = "/", inverse = false }: { href?: string; inverse?: boolean }) {
   return (
-    <Link href={href} className="inline-flex items-center gap-3" aria-label="10Trials admin">
-      <span className={cn(
-        "grid size-9 place-items-center rounded-xl text-sm font-black",
-        inverse ? "bg-white text-[#032e4d]" : "bg-[#032e4d] text-white",
-      )}>
-        10
-      </span>
+    <Link href={href} className="inline-flex items-center gap-3" aria-label="10Trials admin console">
+      <span className="h-9 w-0.5 bg-[#e85b00]" aria-hidden="true" />
       <span>
         <span className={cn(
-          "block text-lg font-black tracking-[-0.04em]",
+          "block text-lg font-bold tracking-[-0.02em]",
           inverse ? "text-white" : "text-[#032e4d]",
         )}>
-          Trials
+          10Trials
         </span>
-        <span className="block text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#e85b00]">
-          Administration
+        <span className={cn(
+          "block text-[10px] font-bold uppercase tracking-[0.14em]",
+          inverse ? "text-[#c7d8e4]" : "text-[#607282]",
+        )}>
+          Admin console
         </span>
       </span>
     </Link>
@@ -74,15 +72,15 @@ export function MetricCard({
   tone?: "navy" | "orange" | "green" | "violet" | "red";
 }) {
   const tones = {
-    navy: "bg-[#e8f3fa] text-[#07436c]",
-    orange: "bg-[#fff0e5] text-[#c94d00]",
-    green: "bg-[#e9f8f0] text-[#13734d]",
-    violet: "bg-[#f1eafe] text-[#6b46c1]",
-    red: "bg-red-50 text-red-700",
+    navy: "bg-[#edf3f6] text-[#07436c]",
+    orange: "bg-[#f7eee8] text-[#a84412]",
+    green: "bg-[#eef5f1] text-[#176846]",
+    violet: "bg-[#eef2f5] text-[#40566a]",
+    red: "bg-[#f8eeee] text-[#a93636]",
   };
   return (
     <article className="panel p-4 sm:p-5">
-      <div className={cn("grid size-9 place-items-center rounded-lg", tones[tone])}>
+      <div className={cn("grid size-8 place-items-center rounded-md border border-current/10", tones[tone])}>
         <Icon size={18} />
       </div>
       <p className="mt-4 break-words text-2xl font-black tracking-[-0.03em] text-[#032e4d]">
@@ -114,7 +112,7 @@ export function StatusBadge({ value }: { value?: string | null }) {
       pro: "bg-violet-50 text-violet-700 ring-violet-600/15",
     }[normalized] ?? "bg-slate-100 text-slate-600 ring-slate-500/15";
   return (
-    <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-extrabold ring-1 ring-inset", styles)}>
+    <span className={cn("inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset", styles)}>
       {titleCase(normalized)}
     </span>
   );
@@ -300,7 +298,7 @@ export function TrendChart({
         {secondary && (
           <polyline points={points(secondary)} fill="none" stroke="#9eb3c0" strokeWidth="1.7" vectorEffect="non-scaling-stroke" />
         )}
-        <polyline points={points(values)} fill="none" stroke="#ff6b00" strokeWidth="2.3" vectorEffect="non-scaling-stroke" />
+        <polyline points={points(values)} fill="none" stroke="#d45a18" strokeWidth="2.1" vectorEffect="non-scaling-stroke" />
       </svg>
       {labels?.length ? (
         <div className="mt-1 flex justify-between text-[10px] font-bold text-[#8a9aa5]">

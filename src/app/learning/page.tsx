@@ -46,13 +46,13 @@ export default function LearningPage() {
   return (
     <AdminShell>
       <PageHeader
-        eyebrow="Learning operations"
-        title="Learning"
-        description="Aggregated session outcomes and adoption patterns without exposing generated questions or learner answers."
+        eyebrow="Assessment performance"
+        title="Exam analytics"
+        description="Aggregated exam-session outcomes and adoption patterns without exposing generated questions or user answers."
         action={<select className="field w-40" value={days} onChange={(event) => setDays(Number(event.target.value))}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option></select>}
       />
       {insights.isLoading ? (
-        <div className="grid min-h-80 place-items-center"><Spinner label="Loading learning analytics" /></div>
+        <div className="grid min-h-80 place-items-center"><Spinner label="Loading exam analytics" /></div>
       ) : insights.isError || !data ? (
         <div className="mt-7"><ErrorPanel error={insights.error} onRetry={() => insights.refetch()} /></div>
       ) : (
@@ -95,7 +95,7 @@ export default function LearningPage() {
         </div>
         {sessions.isLoading ? <div className="grid min-h-64 place-items-center"><Spinner /></div> : sessions.isError ? <div className="p-5"><ErrorPanel error={sessions.error} onRetry={() => sessions.refetch()} /></div> : (
           <><div className="table-shell"><table className="data-table"><thead><tr><th>Exam</th><th>User</th><th>Status</th><th>Mode</th><th>Difficulty</th><th>Score</th><th>Created</th></tr></thead><tbody>
-            {sessions.data?.sessions.map((session) => <tr key={session.id}><td><p className="max-w-64 truncate font-black text-[#032e4d]">{session.exam_name}</p><p className="text-xs text-[#607282]">{session.num_questions ?? 0} questions</p></td><td className="text-[#607282]">{session.user_email || "—"}</td><td><StatusBadge value={session.status} /></td><td>{titleCase(session.mode)}</td><td>{titleCase(session.difficulty)}</td><td>{session.status === "completed" ? formatPercent(session.percentage) : "—"}</td><td>{formatDate(session.created_at)}</td></tr>)}
+            {sessions.data?.sessions.map((session) => <tr key={session.id}><td><p className="max-w-64 truncate font-black text-[#032e4d]">{session.exam_name}</p><p className="text-xs text-[#607282]">{session.num_questions ?? 0} questions</p></td><td className="text-[#607282]">{session.user_email || "N/A"}</td><td><StatusBadge value={session.status} /></td><td>{titleCase(session.mode)}</td><td>{titleCase(session.difficulty)}</td><td>{session.status === "completed" ? formatPercent(session.percentage) : "N/A"}</td><td>{formatDate(session.created_at)}</td></tr>)}
           </tbody></table></div>{sessions.data && <PaginationControls offset={offset} limit={LIMIT} total={sessions.data.pagination.total} onChange={setOffset} />}</>
         )}
       </section>
