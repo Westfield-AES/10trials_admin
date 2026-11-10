@@ -18,7 +18,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import type { AdminPermission } from "@/lib/types";
+import { adminRoutePermissions, permissionForAdminPath } from "@/lib/admin-access";
 import { accessErrorMessage } from "@/lib/user-errors";
 import { cn, titleCase } from "@/lib/utils";
 import { AdminInstallPrompt } from "@/components/admin-install-prompt";
@@ -26,22 +26,21 @@ import { useAdminAuth } from "@/components/providers";
 import { Logo, Spinner } from "@/components/ui";
 
 interface NavigationItem {
-  href: string;
+  href: keyof typeof adminRoutePermissions;
   label: string;
   icon: typeof LayoutDashboard;
-  permission: AdminPermission;
 }
 
 const navigation: NavigationItem[] = [
-  { href: "/", label: "Overview", icon: LayoutDashboard, permission: "dashboard.read" },
-  { href: "/users", label: "Users", icon: Users, permission: "users.read" },
-  { href: "/question-reports", label: "Question reports", icon: MessageSquareWarning, permission: "question_reports.read" },
-  { href: "/learning", label: "Exam analytics", icon: BarChart3, permission: "learning.read" },
-  { href: "/billing", label: "Billing", icon: CircleDollarSign, permission: "billing.read" },
-  { href: "/ai-costs", label: "AI & costs", icon: BrainCircuit, permission: "ai.read" },
-  { href: "/operations", label: "Operations", icon: BriefcaseBusiness, permission: "jobs.read" },
-  { href: "/audit", label: "Audit log", icon: ClipboardList, permission: "audit.read" },
-  { href: "/admins", label: "Administrators", icon: ShieldCheck, permission: "admins.manage" },
+  { href: "/", label: "Overview", icon: LayoutDashboard },
+  { href: "/users", label: "Users", icon: Users },
+  { href: "/question-reports", label: "Question reports", icon: MessageSquareWarning },
+  { href: "/learning", label: "Exam analytics", icon: BarChart3 },
+  { href: "/billing", label: "Billing", icon: CircleDollarSign },
+  { href: "/ai-costs", label: "AI & costs", icon: BrainCircuit },
+  { href: "/operations", label: "Operations", icon: BriefcaseBusiness },
+  { href: "/audit", label: "Audit log", icon: ClipboardList },
+  { href: "/admins", label: "Administrators", icon: ShieldCheck },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -56,7 +55,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }, [loading, pathname, router, user]);
 
   const links = useMemo(
-    () => navigation.filter((item) => admin?.permissions.includes(item.permission)),
+    () => navigation.filter((item) => admin?.permissions.includes(adminRoutePermissions[item.href])),
     [admin],
   );
 
@@ -114,6 +113,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   if (!admin) return null;
+
+  const permission = permissionForAdminPath(pathname);
+  const allowed = !permission || admin.permissions.includes(permission);
 
   const sidebar = (
     <>
@@ -213,7 +215,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="admin-main min-w-0 p-4 lg:ml-64 lg:p-7 xl:p-9">{children}</main>
+      <main className="admin-main min-w-0 p-4 lg:ml-64 lg:p-7 xl:p-9">
+        {allowed ? children : (
+          <section className="panel p-6" role="alert">
+            <h1 className="text-xl font-black text-[#032e4d]">Access restricted</h1>
+            <p className="mt-3 text-sm text-[#607282]">Your administrator role does not have access to this page.</p>
+            <Link className="button-secondary mt-5" href="/">Return to overview</Link>
+          </section>
+        )}
+      </main>
     </div>
   );
 }

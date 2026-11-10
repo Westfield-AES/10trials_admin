@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { BrainCircuit, Coins, DatabaseZap, SearchCode } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { useAdminQuery } from "@/components/providers";
 import { BarList, ErrorPanel, MetricCard, PageHeader, SectionTitle, Spinner, TrendChart } from "@/components/ui";
 import { apiRequest } from "@/lib/api";
 import type { AiSummary } from "@/lib/types";
@@ -14,10 +14,10 @@ function range(days: number) { const to = new Date(); const from = new Date(to);
 export default function AiCostsPage() {
   const [days, setDays] = useState(30);
   const dateQuery = useMemo(() => range(days), [days]);
-  const query = useQuery({ queryKey: ["ai-summary", days], queryFn: () => apiRequest<AiSummary>(`/api/v1/admin/ai/summary?${dateQuery}`) });
+  const query = useAdminQuery("ai.read", { queryKey: ["ai-summary", days], queryFn: () => apiRequest<AiSummary>(`/api/v1/admin/ai/summary?${dateQuery}`) });
   const data = query.data;
   return <AdminShell>
-    <PageHeader eyebrow="Provider economics" title="AI & costs" description="Anthropic calls, tokens, cache use, web search, and estimated cost from the backend-owned usage ledger." action={<select className="field w-40" value={days} onChange={(event) => setDays(Number(event.target.value))}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option></select>} />
+    <PageHeader eyebrow="Provider economics" title="AI & costs" description="AI provider calls, tokens, cache use, web search, and estimated cost from the backend-owned usage ledger." action={<select className="field w-40" value={days} onChange={(event) => setDays(Number(event.target.value))}><option value={7}>Last 7 days</option><option value={30}>Last 30 days</option><option value={90}>Last 90 days</option></select>} />
     {query.isLoading ? <div className="grid min-h-[55vh] place-items-center"><Spinner label="Loading AI usage" /></div> : query.isError || !data ? <div className="mt-7"><ErrorPanel error={query.error} onRetry={() => query.refetch()} /></div> : <>
       <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard icon={Coins} label="Estimated spend" value={formatUsd(data.summary.cost_usd)} tone="orange" />

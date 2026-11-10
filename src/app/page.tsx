@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   Activity,
   BrainCircuit,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { useAdminQuery } from "@/components/providers";
 import {
   ErrorPanel,
   MetricCard,
@@ -40,7 +40,7 @@ function range(days: number) {
 export default function OverviewPage() {
   const [days, setDays] = useState(30);
   const query = useMemo(() => range(days), [days]);
-  const overview = useQuery({
+  const overview = useAdminQuery("dashboard.read", {
     queryKey: ["admin-overview", days],
     queryFn: () => apiRequest<Overview>(`/api/v1/admin/overview?${query}`),
   });

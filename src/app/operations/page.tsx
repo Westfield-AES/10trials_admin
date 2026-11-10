@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Activity, CircleCheck, Clock3, RefreshCw, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
-import { useAdminAuth } from "@/components/providers";
+import { useAdminAuth, useAdminQuery } from "@/components/providers";
 import { BarList, ErrorPanel, FeedbackBanner, MetricCard, Modal, PageHeader, PaginationControls, SectionTitle, Spinner, StatusBadge } from "@/components/ui";
 import { apiRequest } from "@/lib/api";
 import type { JobItem, JobsSummary, Pagination } from "@/lib/types";
@@ -26,9 +26,9 @@ export default function OperationsPage() {
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; tone: "success" | "error" } | null>(null);
   const dateQuery = useMemo(() => range(days), [days]);
-  const summary = useQuery({ queryKey: ["jobs-summary", days], queryFn: () => apiRequest<JobsSummary>(`/api/v1/admin/jobs/summary?${dateQuery}`) });
+  const summary = useAdminQuery("jobs.read", { queryKey: ["jobs-summary", days], queryFn: () => apiRequest<JobsSummary>(`/api/v1/admin/jobs/summary?${dateQuery}`) });
   const jobsPath = withParams("/api/v1/admin/jobs", { status, job_type: jobType, limit: LIMIT, offset });
-  const jobs = useQuery({ queryKey: ["admin-jobs", status, jobType, offset], queryFn: () => apiRequest<{ jobs: JobItem[]; pagination: Pagination }>(jobsPath) });
+  const jobs = useAdminQuery("jobs.read", { queryKey: ["admin-jobs", status, jobType, offset], queryFn: () => apiRequest<{ jobs: JobItem[]; pagination: Pagination }>(jobsPath) });
 
   async function retry() {
     if (!selected) return;

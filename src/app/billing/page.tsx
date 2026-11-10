@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { CircleDollarSign, CreditCard, ReceiptText, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { useAdminQuery } from "@/components/providers";
 import { BarList, ErrorPanel, MetricCard, PageHeader, SectionTitle, Spinner, StatusBadge } from "@/components/ui";
 import { apiRequest } from "@/lib/api";
 import type { BillingSummary, Pagination, SubscriptionItem, TransactionItem } from "@/lib/types";
@@ -14,9 +14,9 @@ function range(days: number) { const to = new Date(); const from = new Date(to);
 export default function BillingPage() {
   const [days, setDays] = useState(30);
   const dateQuery = useMemo(() => range(days), [days]);
-  const summary = useQuery({ queryKey: ["billing-summary", days], queryFn: () => apiRequest<BillingSummary>(`/api/v1/admin/billing/summary?${dateQuery}`) });
-  const subscriptions = useQuery({ queryKey: ["admin-subscriptions"], queryFn: () => apiRequest<{ subscriptions: SubscriptionItem[]; pagination: Pagination }>(withParams("/api/v1/admin/subscriptions", { limit: 50 })) });
-  const transactions = useQuery({ queryKey: ["admin-transactions"], queryFn: () => apiRequest<{ transactions: TransactionItem[]; pagination: Pagination }>(withParams("/api/v1/admin/transactions", { limit: 50 })) });
+  const summary = useAdminQuery("billing.read", { queryKey: ["billing-summary", days], queryFn: () => apiRequest<BillingSummary>(`/api/v1/admin/billing/summary?${dateQuery}`) });
+  const subscriptions = useAdminQuery("billing.read", { queryKey: ["admin-subscriptions"], queryFn: () => apiRequest<{ subscriptions: SubscriptionItem[]; pagination: Pagination }>(withParams("/api/v1/admin/subscriptions", { limit: 50 })) });
+  const transactions = useAdminQuery("billing.read", { queryKey: ["admin-transactions"], queryFn: () => apiRequest<{ transactions: TransactionItem[]; pagination: Pagination }>(withParams("/api/v1/admin/transactions", { limit: 50 })) });
   const data = summary.data;
   const revenueLabel = data?.revenue.map((item) => formatMinorAmount(item.amount, item.currency)).join(" · ") || "N/A";
   const mrrLabel = data?.mrr.map((item) => formatMinorAmount(item.amount, item.currency)).join(" · ") || "N/A";

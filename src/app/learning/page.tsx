@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { BookOpenCheck, Gauge, RotateCcw, TimerReset } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { useAdminQuery } from "@/components/providers";
 import {
   BarList,
   ErrorPanel,
@@ -33,12 +33,12 @@ export default function LearningPage() {
   const [mode, setMode] = useState("");
   const [offset, setOffset] = useState(0);
   const dateQuery = useMemo(() => range(days), [days]);
-  const insights = useQuery({
+  const insights = useAdminQuery("learning.read", {
     queryKey: ["learning-insights", days],
     queryFn: () => apiRequest<LearningInsights>(`/api/v1/admin/learning/insights?${dateQuery}`),
   });
   const sessionsPath = withParams("/api/v1/admin/sessions", { status, mode, limit: LIMIT, offset });
-  const sessions = useQuery({
+  const sessions = useAdminQuery("learning.read", {
     queryKey: ["admin-sessions", status, mode, offset],
     queryFn: () => apiRequest<{ sessions: SessionItem[]; pagination: Pagination }>(sessionsPath),
   });

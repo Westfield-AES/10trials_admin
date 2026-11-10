@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import {
   CheckCircle2,
   MessageSquareWarning,
@@ -11,7 +10,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
-import { useAdminAuth } from "@/components/providers";
+import { useAdminAuth, useAdminQuery } from "@/components/providers";
 import {
   EmptyState,
   ErrorPanel,
@@ -34,14 +33,13 @@ export default function QuestionReportsPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [offset, setOffset] = useState(0);
-  const summary = useQuery({
+  const summary = useAdminQuery("question_reports.read", {
     queryKey: ["question-report-summary"],
     queryFn: () =>
       apiRequest<ReportSummary>("/api/v1/admin/question-reports/summary"),
-    enabled: allowed,
     refetchInterval: 30000,
   });
-  const reports = useQuery({
+  const reports = useAdminQuery("question_reports.read", {
     queryKey: ["question-reports", status, search, offset],
     queryFn: () =>
       apiRequest<{ questions: ReportGroup[]; pagination: Pagination }>(
@@ -52,7 +50,6 @@ export default function QuestionReportsPage() {
           offset,
         }),
       ),
-    enabled: allowed,
     refetchInterval: 30000,
   });
   return (
