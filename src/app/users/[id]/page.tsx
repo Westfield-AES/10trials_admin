@@ -95,10 +95,16 @@ export default function UserDetailPage() {
             />
           </div>
           {feedback && <FeedbackBanner {...feedback} />}
+          <section className="panel mt-6 p-6">
+            <p className="text-xs font-black uppercase tracking-wider text-[#c94d00]">Practice journey</p>
+            <h2 className="mt-2 text-xl font-black text-[#032e4d]">{({ start_free: "Ready for first free practice", free_practice: "Using one-time free practice", upgrade_required: "Free allowance used · upgrade available", pro_practice: "Pro practice active", monthly_limit_reached: "Monthly Pro allowance used" } as Record<string, string>)[data.journey.phase] || data.journey.phase}</h2>
+            <p className="mt-3 text-sm text-[#607282]">{data.journey.sessions_remaining} sessions and {data.journey.questions_remaining} questions remaining · {data.usage_period === "lifetime" ? "one-time lifetime allowance" : "current calendar month"}.</p>
+            {data.journey.payment_pending && <p className="mt-2 text-sm font-bold text-[#607282]">Checkout started; payment has not yet activated Pro access.</p>}
+          </section>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard icon={BookOpenCheck} label="Completed sessions" value={data.session_summary.completed} />
-            <MetricCard icon={Gauge} label="Sessions used this month" value={data.usage.sessions} tone="orange" />
-            <MetricCard icon={BookOpenCheck} label="Questions used" value={data.usage.questions} tone="violet" />
+            <MetricCard icon={Gauge} label={data.usage_period === "lifetime" ? "Sessions used in lifetime" : "Sessions used this month"} value={data.usage.sessions} tone="orange" />
+            <MetricCard icon={BookOpenCheck} label={data.usage_period === "lifetime" ? "Questions used in lifetime" : "Questions used this month"} value={data.usage.questions} tone="violet" />
             <MetricCard icon={Gauge} label="Average score" value={formatPercent(data.session_summary.average_score)} tone="green" />
           </div>
           <div className="mt-6 grid gap-6 xl:grid-cols-2">
@@ -133,7 +139,7 @@ export default function UserDetailPage() {
               {data.recent_sessions.map((session) => <tr key={session.id}><td className="font-black text-[#032e4d]">{session.exam_name}</td><td><StatusBadge value={session.status} /></td><td>{titleCase(session.mode)}</td><td>{session.num_questions ?? "N/A"}</td><td>{session.status === "completed" ? formatPercent(session.percentage) : "N/A"}</td><td>{formatDate(session.created_at)}</td></tr>)}
             </tbody></table></div>
           </section>
-          <Modal open={Boolean(action)} title={action === "usage" ? "Adjust monthly usage" : action === "delete" ? "Remove user access" : "Restore account"} onClose={() => setAction(null)}>
+          <Modal open={Boolean(action)} title={action === "usage" ? (data.usage_period === "lifetime" ? "Adjust lifetime usage" : "Adjust monthly usage") : action === "delete" ? "Remove user access" : "Restore account"} onClose={() => setAction(null)}>
             {action === "usage" && <div className="grid gap-4 sm:grid-cols-2"><label><span className="field-label">Session change</span><input className="field" type="number" min={-100} max={100} value={sessionDelta} onChange={(event) => setSessionDelta(Number(event.target.value))} /></label><label><span className="field-label">Question change</span><input className="field" type="number" min={-10000} max={10000} value={questionDelta} onChange={(event) => setQuestionDelta(Number(event.target.value))} /></label></div>}
             {action === "delete" && <p className="rounded-xl bg-red-50 p-4 text-sm leading-6 text-red-800">This removes user access but remains recoverable. No permanent deletion is performed.</p>}
             <label className="mt-4 block"><span className="field-label">Reason</span><textarea className="field min-h-24" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Required for the audit log" /></label>

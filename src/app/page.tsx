@@ -72,6 +72,17 @@ export default function OverviewPage() {
             <MetricCard icon={CircleUserRound} label="Pro accounts" value={summary.pro_users} note={`${summary.total_users} registered accounts`} tone="violet" />
             <MetricCard icon={BrainCircuit} label="AI spend" value={formatUsd(summary.ai_cost_usd)} note={`Across ${days} days`} tone="orange" />
           </div>
+          <section className="panel mt-6 p-6">
+            <SectionTitle title="Start free → practise → upgrade" note="Current stages of active accounts, across their account history." />
+            <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {[
+                ["Ready to start", data.practice_funnel.not_started],
+                ["Using free practice", data.practice_funnel.practising],
+                ["Free allowance used", data.practice_funnel.upgrade_required],
+                ["Pro access", data.practice_funnel.pro],
+              ].map(([label, value]) => <div key={label} className="rounded-xl bg-[#f3f6f8] p-4"><p className="text-3xl font-black text-[#032e4d]">{value}</p><p className="mt-2 text-sm font-bold text-[#607282]">{label}</p></div>)}
+            </div>
+          </section>
           <div className="mt-6 grid gap-6 xl:grid-cols-[1.65fr_0.85fr]">
             <section className="panel p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">

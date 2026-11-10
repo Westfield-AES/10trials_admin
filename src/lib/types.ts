@@ -7,6 +7,8 @@ export type AdminPermission =
   | "users.account.delete"
   | "users.account.restore"
   | "learning.read"
+  | "question_reports.read"
+  | "question_reports.manage"
   | "billing.read"
   | "ai.read"
   | "jobs.read"
@@ -47,6 +49,7 @@ export interface Pagination {
 }
 
 export interface Overview {
+  practice_funnel: { not_started: number; practising: number; upgrade_required: number; pro: number };
   summary: {
     total_users: number;
     active_accounts: number;
@@ -83,6 +86,8 @@ export interface UserListItem {
   age_confirmed: boolean;
   created_at: string;
   sessions_used: number;
+  practice_stage: "not_started" | "practising" | "upgrade_required" | "pro";
+  usage_period: "lifetime" | "monthly";
   completed_sessions: number;
   subscription_status?: string | null;
 }
@@ -120,6 +125,8 @@ export interface UserDetail {
     updated_at: string;
   };
   usage: { sessions: number; questions: number };
+  journey: { phase: string; sessions_remaining: number; questions_remaining: number; payment_pending: boolean };
+  usage_period: "lifetime" | "monthly";
   subscription?: SubscriptionItem | null;
   session_summary: {
     total: number;
