@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { Search, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { useAdminQuery } from "@/components/providers";
 import { ResetUsageButton } from "@/components/reset-usage-button";
 import {
   EmptyState,
@@ -37,7 +37,7 @@ export default function UsersPage() {
     limit: LIMIT,
     offset,
   });
-  const users = useQuery({
+  const users = useAdminQuery("users.read", {
     queryKey: ["admin-users", appliedSearch, status, plan, practiceStage, offset],
     queryFn: () => apiRequest<{ users: UserListItem[]; pagination: Pagination }>(path),
   });

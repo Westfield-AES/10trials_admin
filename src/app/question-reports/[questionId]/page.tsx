@@ -1,12 +1,12 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Ban, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
-import { useAdminAuth } from "@/components/providers";
+import { useAdminAuth, useAdminQuery } from "@/components/providers";
 import {
   EmptyState,
   ErrorPanel,
@@ -30,13 +30,12 @@ export default function ReportedQuestionPage() {
     admin?.permissions.includes("question_reports.manage"),
   );
   const client = useQueryClient();
-  const detail = useQuery({
+  const detail = useAdminQuery("question_reports.read", {
     queryKey: ["reported-question", questionId],
     queryFn: () =>
       apiRequest<ReportDetail>(
         `/api/v1/admin/question-reports/${encodeURIComponent(questionId)}`,
       ),
-    enabled: allowed,
     refetchInterval: 30000,
   });
   const item = detail.data;

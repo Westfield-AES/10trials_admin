@@ -1,6 +1,6 @@
 "use client";
 
-import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { QueryClientProvider, useQueryClient, type UseQueryOptions } from "@tanstack/react-query";
 import {
   useCallback,
   createContext,
@@ -8,20 +8,24 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest, publicApiRequest } from "@/lib/api";
+import { bindAdminQuerySession, createAdminQueryClient } from "@/lib/admin-query-session";
 import {
   ADMIN_SESSION_CHANGED,
   getAdminAuthChallenge,
   getAdminSessionToken,
   setAdminAuthChallenge,
   setAdminSessionToken,
+  subscribeToAdminSession,
 } from "@/lib/admin-session";
 import type {
   AdminAuthChallenge,
   AdminProfile,
   AdminSessionResponse,
+  AdminPermission,
 } from "@/lib/types";
 
 interface AdminAuthState {
@@ -135,7 +139,7 @@ function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
   const profile = useQuery({
     queryKey: ["admin-profile", token],
-    queryFn: () => apiRequest<{ admin: AdminProfile }>("/api/v1/admin/me"),
+    queryFn: ({ signal }) => apiRequest<{ admin: AdminProfile }>("/api/v1/admin/me", { signal }),
     enabled: Boolean(token),
     retry: false,
     staleTime: 60_000,
@@ -192,18 +196,18 @@ function AdminAuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      if (getAdminSessionToken()) {
-        await apiRequest<void>("/api/v1/admin/auth/logout", { method: "POST" });
-      }
-    } finally {
-      setAdminSessionToken(null);
-      setAdminAuthChallenge(null);
-      setToken(null);
-      setChallenge(null);
-      queryClient.removeQueries({ queryKey: ["admin-profile"] });
+    const sessionToken = getAdminSessionToken();
+    setAdminAuthChallenge(null);
+    setAdminSessionToken(null);
+    setToken(null);
+    setChallenge(null);
+    if (sessionToken) {
+      await publicApiRequest<void>("/api/v1/admin/auth/logout", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
     }
-  }, [queryClient]);
+  }, []);
 
   const value = useMemo<AdminAuthState>(
     () => ({
@@ -246,20 +250,43 @@ export function useAdminAuth() {
   return value;
 }
 
+export function useAdminQuery<T>(
+  permission: AdminPermission,
+  options: Omit<UseQueryOptions<T>, "enabled">,
+) {
+  const { admin } = useAdminAuth();
+  return useQuery({
+    ...options,
+    enabled: Boolean(admin?.permissions.includes(permission)),
+  });
+}
+
 export function useAdminPwaInstall() {
   const value = useContext(AdminPwaInstallContext);
   if (!value) throw new Error("useAdminPwaInstall must be used within AppProviders");
   return value;
 }
 
+function AdminSessionProviders({ children }: { children: React.ReactNode }) {
+  const [client] = useState(createAdminQueryClient);
+  useEffect(() => bindAdminQuerySession(client), [client]);
+
+  return (
+    <QueryClientProvider client={client}>
+      <AdminAuthProvider>{children}</AdminAuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+function serverSessionToken() {
+  return null;
+}
+
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  const [client] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: { staleTime: 30_000, refetchOnWindowFocus: false, retry: 1 },
-        },
-      }),
+  const token = useSyncExternalStore(
+    subscribeToAdminSession,
+    getAdminSessionToken,
+    serverSessionToken,
   );
 
   useEffect(() => {
@@ -283,10 +310,10 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <QueryClientProvider client={client}>
-      <AdminPwaInstallProvider>
-        <AdminAuthProvider>{children}</AdminAuthProvider>
-      </AdminPwaInstallProvider>
-    </QueryClientProvider>
+    <AdminPwaInstallProvider>
+      <AdminSessionProviders key={token ?? "signed-out"}>
+        {children}
+      </AdminSessionProviders>
+    </AdminPwaInstallProvider>
   );
 }

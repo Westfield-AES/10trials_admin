@@ -1,9 +1,10 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Plus, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { useAdminQuery } from "@/components/providers";
 import { ErrorPanel, FeedbackBanner, Modal, PageHeader, Spinner, StatusBadge } from "@/components/ui";
 import { apiRequest } from "@/lib/api";
 import type { AdminMember, AdminRole } from "@/lib/types";
@@ -27,7 +28,7 @@ export default function AdminsPage() {
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; tone: "success" | "error" } | null>(null);
-  const admins = useQuery({ queryKey: ["admin-members"], queryFn: () => apiRequest<{ admins: AdminMember[] }>("/api/v1/admin/admins") });
+  const admins = useAdminQuery("admins.manage", { queryKey: ["admin-members"], queryFn: () => apiRequest<{ admins: AdminMember[] }>("/api/v1/admin/admins") });
 
   function closeCreate() {
     setCreateOpen(false);

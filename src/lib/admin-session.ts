@@ -4,6 +4,11 @@ const SESSION_KEY = "10trials-admin-session";
 const CHALLENGE_KEY = "10trials-admin-auth-challenge";
 export const ADMIN_SESSION_CHANGED = "10trials-admin-session-changed";
 
+export function subscribeToAdminSession(listener: () => void): () => void {
+  window.addEventListener(ADMIN_SESSION_CHANGED, listener);
+  return () => window.removeEventListener(ADMIN_SESSION_CHANGED, listener);
+}
+
 export function getAdminSessionToken(): string | null {
   if (typeof window === "undefined") return null;
   return window.sessionStorage.getItem(SESSION_KEY);

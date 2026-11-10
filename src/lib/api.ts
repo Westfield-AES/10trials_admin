@@ -1,4 +1,4 @@
-import { getAdminSessionToken, setAdminSessionToken } from "@/lib/admin-session";
+import { getAdminSessionToken, setAdminSessionToken, subscribeToAdminSession } from "@/lib/admin-session";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(
   /\/$/,
@@ -32,37 +32,63 @@ async function request<T>(path: string, init: RequestInit, authenticated: boolea
   if (authenticated && !token) {
     throw new ApiError("Sign in to continue.", 401, "ADMIN_AUTH_REQUIRED");
   }
-  let response: Response;
+  const controller = new AbortController();
+  const abort = () => controller.abort();
+  const assertSession = () => {
+    if (authenticated && getAdminSessionToken() !== token) {
+      throw new ApiError("Your administrator session has changed.", 401, "ADMIN_SESSION_CHANGED");
+    }
+  };
+  const unsubscribe = authenticated
+    ? subscribeToAdminSession(() => {
+        if (getAdminSessionToken() !== token) abort();
+      })
+    : () => {};
+  init.signal?.addEventListener("abort", abort, { once: true });
+  if (init.signal?.aborted) abort();
   try {
-    response = await fetch(`${API_URL}${path}`, {
-      ...init,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...init.headers,
-      },
-    });
-  } catch (cause) {
-    throw new ApiError(
-      "The admin API is unreachable. Check the backend and try again.",
-      0,
-      "NETWORK_ERROR",
-      cause,
-    );
+    let response: Response;
+    try {
+      response = await fetch(`${API_URL}${path}`, {
+        ...init,
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...init.headers,
+        },
+      });
+    } catch (cause) {
+      assertSession();
+      if (controller.signal.aborted) throw cause;
+      throw new ApiError(
+        "The admin API is unreachable. Check the backend and try again.",
+        0,
+        "NETWORK_ERROR",
+        cause,
+      );
+    }
+    assertSession();
+    if (!response.ok) {
+      const payload = (await response.json().catch(() => null)) as ErrorPayload | null;
+      assertSession();
+      if (response.status === 401 && authenticated) setAdminSessionToken(null);
+      throw new ApiError(
+        payload?.error?.message ?? "The request could not be completed.",
+        response.status,
+        payload?.error?.code ?? `HTTP_${response.status}`,
+        payload?.error?.details,
+        payload?.error?.request_id ?? response.headers.get("x-request-id") ?? undefined,
+      );
+    }
+    if (response.status === 204) return undefined as T;
+    const result = await response.json();
+    assertSession();
+    return result as T;
+  } finally {
+    unsubscribe();
+    init.signal?.removeEventListener("abort", abort);
   }
-  if (response.status === 401 && authenticated) setAdminSessionToken(null);
-  if (!response.ok) {
-    const payload = (await response.json().catch(() => null)) as ErrorPayload | null;
-    throw new ApiError(
-      payload?.error?.message ?? "The request could not be completed.",
-      response.status,
-      payload?.error?.code ?? `HTTP_${response.status}`,
-      payload?.error?.details,
-      payload?.error?.request_id ?? response.headers.get("x-request-id") ?? undefined,
-    );
-  }
-  if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
 }
 
 export function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {

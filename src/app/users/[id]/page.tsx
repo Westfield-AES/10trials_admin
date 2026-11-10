@@ -1,13 +1,13 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, BookOpenCheck, Gauge, RotateCcw, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
 import { ResetUsageButton } from "@/components/reset-usage-button";
-import { useAdminAuth } from "@/components/providers";
+import { useAdminAuth, useAdminQuery } from "@/components/providers";
 import {
   ErrorPanel,
   FeedbackBanner,
@@ -34,7 +34,7 @@ export default function UserDetailPage() {
   const [questionDelta, setQuestionDelta] = useState(0);
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ message: string; tone: "success" | "error" } | null>(null);
-  const detail = useQuery({
+  const detail = useAdminQuery("users.read", {
     queryKey: ["admin-user", id],
     queryFn: () => apiRequest<UserDetail>(`/api/v1/admin/users/${id}`),
   });
