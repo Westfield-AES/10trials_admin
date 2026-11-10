@@ -179,6 +179,7 @@ export function requestErrorMessage(error: unknown): string {
     LAST_OWNER_REQUIRED: "There must always be at least one active owner. Add another owner before changing this one.",
     VALIDATION_ERROR: "Check the information you entered and try again.",
     ADJUSTMENT_REQUIRED: "Enter a change to sessions or questions before saving.",
+    USAGE_RESET_IN_PROGRESS: "This user has a session being generated. Wait for generation to finish, then reset usage again.",
     USER_NOT_FOUND: "This user could not be found. The account may no longer be available.",
     ACCOUNT_NOT_RESTORABLE: "This user account cannot be restored from its current state.",
     JOB_NOT_FOUND: "This background task is no longer available to retry.",
