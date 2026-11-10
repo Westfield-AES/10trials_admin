@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  MessageSquareWarning,
   BrainCircuit,
   BriefcaseBusiness,
   ChevronDown,
@@ -34,6 +35,7 @@ interface NavigationItem {
 const navigation: NavigationItem[] = [
   { href: "/", label: "Overview", icon: LayoutDashboard, permission: "dashboard.read" },
   { href: "/users", label: "Users", icon: Users, permission: "users.read" },
+  { href: "/question-reports", label: "Question reports", icon: MessageSquareWarning, permission: "question_reports.read" },
   { href: "/learning", label: "Exam analytics", icon: BarChart3, permission: "learning.read" },
   { href: "/billing", label: "Billing", icon: CircleDollarSign, permission: "billing.read" },
   { href: "/ai-costs", label: "AI & costs", icon: BrainCircuit, permission: "ai.read" },

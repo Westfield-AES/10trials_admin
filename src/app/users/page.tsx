@@ -24,16 +24,18 @@ export default function UsersPage() {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [status, setStatus] = useState("");
   const [plan, setPlan] = useState("");
+  const [practiceStage, setPracticeStage] = useState("");
   const [offset, setOffset] = useState(0);
   const path = withParams("/api/v1/admin/users", {
     query: appliedSearch,
     status,
     plan,
+    practice_stage: practiceStage,
     limit: LIMIT,
     offset,
   });
   const users = useQuery({
-    queryKey: ["admin-users", appliedSearch, status, plan, offset],
+    queryKey: ["admin-users", appliedSearch, status, plan, practiceStage, offset],
     queryFn: () => apiRequest<{ users: UserListItem[]; pagination: Pagination }>(path),
   });
   return (
@@ -44,7 +46,7 @@ export default function UsersPage() {
         description="Find user accounts, inspect usage and subscription state, and handle approved support actions."
       />
       <form
-        className="panel mt-7 grid gap-3 p-4 md:grid-cols-[1fr_180px_160px_auto]"
+        className="panel mt-7 grid gap-3 p-4 md:grid-cols-[1fr_150px_140px_180px_auto]"
         onSubmit={(event) => {
           event.preventDefault();
           setOffset(0);
@@ -66,6 +68,13 @@ export default function UsersPage() {
           <option value="free">Free</option>
           <option value="pro">Pro</option>
         </select>
+        <select aria-label="Practice stage" className="field" value={practiceStage} onChange={(event) => { setPracticeStage(event.target.value); setOffset(0); }}>
+          <option value="">All practice stages</option>
+          <option value="not_started">Ready to start free</option>
+          <option value="practising">Using free allowance</option>
+          <option value="upgrade_required">Free allowance used</option>
+          <option value="pro">Pro access</option>
+        </select>
         <button className="button-primary"><Search size={16} /> Apply</button>
       </form>
       <section className="panel mt-5 overflow-hidden">
@@ -77,7 +86,7 @@ export default function UsersPage() {
           <>
             <div className="table-shell">
               <table className="data-table">
-                <thead><tr><th>User</th><th>Status</th><th>Plan</th><th>Usage</th><th>Completed</th><th>Last active</th><th /></tr></thead>
+                <thead><tr><th>User</th><th>Status</th><th>Plan</th><th>Practice stage</th><th>Usage</th><th>Completed</th><th>Last active</th><th /></tr></thead>
                 <tbody>
                   {users.data.users.map((user) => (
                     <tr key={user.id}>
@@ -87,7 +96,8 @@ export default function UsersPage() {
                       </td>
                       <td><StatusBadge value={user.status} /></td>
                       <td><StatusBadge value={user.plan} /></td>
-                      <td><span className="font-black text-[#032e4d]">{user.sessions_used}</span><span className="text-[#607282]"> sessions</span></td>
+                      <td>{({ not_started: "Ready to start free", practising: "Using free allowance", upgrade_required: "Free allowance used", pro: "Pro access" })[user.practice_stage]}</td>
+                      <td><span className="font-black text-[#032e4d]">{user.sessions_used}</span><span className="text-[#607282]"> sessions · {user.usage_period === "lifetime" ? "lifetime" : "this month"}</span></td>
                       <td>{user.completed_sessions}</td>
                       <td className="whitespace-nowrap text-[#607282]">{formatDate(user.last_login_at)}</td>
                       <td className="text-right"><Link className="font-black text-[#c94d00] hover:underline" href={`/users/${user.id}`}>View</Link></td>
