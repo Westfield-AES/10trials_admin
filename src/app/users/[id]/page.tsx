@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { ResetUsageButton } from "@/components/reset-usage-button";
 import { useAdminAuth } from "@/components/providers";
 import {
   ErrorPanel,
@@ -87,6 +88,7 @@ export default function UserDetailPage() {
               description={data.user.email || "No email address recorded"}
               action={
                 <div className="flex flex-wrap gap-2">
+                  <ResetUsageButton userId={id} userLabel={data.user.email || data.user.display_name || id} usagePeriod={data.usage_period} onSuccess={(message) => setFeedback({ message, tone: "success" })} />
                   {admin?.permissions.includes("users.usage.adjust") && <button className="button-secondary" onClick={() => setAction("usage")}><Gauge size={16} /> Adjust usage</button>}
                   {data.user.status === "soft_deleted" && admin?.permissions.includes("users.account.restore") && <button className="button-primary" onClick={() => setAction("restore")}><RotateCcw size={16} /> Restore</button>}
                   {data.user.status === "active" && admin?.permissions.includes("users.account.delete") && <button className="button-danger" onClick={() => setAction("delete")}><Trash2 size={16} /> Remove access</button>}

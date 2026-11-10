@@ -5,9 +5,11 @@ import { Search, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { AdminShell } from "@/components/admin-shell";
+import { ResetUsageButton } from "@/components/reset-usage-button";
 import {
   EmptyState,
   ErrorPanel,
+  FeedbackBanner,
   PageHeader,
   PaginationControls,
   Spinner,
@@ -26,6 +28,7 @@ export default function UsersPage() {
   const [plan, setPlan] = useState("");
   const [practiceStage, setPracticeStage] = useState("");
   const [offset, setOffset] = useState(0);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const path = withParams("/api/v1/admin/users", {
     query: appliedSearch,
     status,
@@ -45,6 +48,7 @@ export default function UsersPage() {
         title="Users"
         description="Find user accounts, inspect usage and subscription state, and handle approved support actions."
       />
+      {feedback && <FeedbackBanner message={feedback} tone="success" />}
       <form
         className="panel mt-7 grid gap-3 p-4 md:grid-cols-[1fr_150px_140px_180px_auto]"
         onSubmit={(event) => {
@@ -86,7 +90,7 @@ export default function UsersPage() {
           <>
             <div className="table-shell">
               <table className="data-table">
-                <thead><tr><th>User</th><th>Status</th><th>Plan</th><th>Practice stage</th><th>Usage</th><th>Completed</th><th>Last active</th><th /></tr></thead>
+                <thead><tr><th>User</th><th>Status</th><th>Plan</th><th>Practice stage</th><th>Usage</th><th>Completed</th><th>Last active</th><th>Actions</th></tr></thead>
                 <tbody>
                   {users.data.users.map((user) => (
                     <tr key={user.id}>
@@ -100,7 +104,12 @@ export default function UsersPage() {
                       <td><span className="font-black text-[#032e4d]">{user.sessions_used}</span><span className="text-[#607282]"> sessions · {user.usage_period === "lifetime" ? "lifetime" : "this month"}</span></td>
                       <td>{user.completed_sessions}</td>
                       <td className="whitespace-nowrap text-[#607282]">{formatDate(user.last_login_at)}</td>
-                      <td className="text-right"><Link className="font-black text-[#c94d00] hover:underline" href={`/users/${user.id}`}>View</Link></td>
+                      <td>
+                        <div className="flex items-center justify-end gap-3">
+                          <ResetUsageButton userId={user.id} userLabel={user.email || user.display_name || user.id} usagePeriod={user.usage_period} onSuccess={setFeedback} />
+                          <Link className="font-black text-[#c94d00] hover:underline" href={`/users/${user.id}`}>View</Link>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
